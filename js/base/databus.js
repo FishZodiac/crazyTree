@@ -17,8 +17,8 @@ export default class databus{
 		this.trees.push(tree)
 	}
 
-	shiftTree(){
+	shiftTree(posi){
+		//this.trees[0].renderMove(posi)
 		this.trees.shift()
-		console.log(this.trees)
 	}
 }

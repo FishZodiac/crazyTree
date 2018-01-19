@@ -14,19 +14,27 @@ let treeLeft = "images/treeLeft.png"
 let treeCen = "images/tree.png"
 let treeRight = "images/treeRight.png"
 
+let npcImg = 'images/npc.png'
+let npcMove = 'images/npcMove.png'
+let npcDie = 'images/npcDie.png'
+
 export default class main{
 	constructor(){
-		this.starting = false
+		this.restart = false
 		this.init()				
 	}
 
 	init(){
+		databus.reset()
+		canvas.removeEventListener('touchstart',this.touchHandler)
+		wx.triggerGC()
+
 		this.back = new Back(ctx)	
-		this.npc = new Npc(ctx)
+		this.npc = new Npc(ctx)		
 		this.gameinfo = new Gameinfo(ctx)
 					
 		for (var i = 1; i < 12; i++) {
-			let _img = this.randomTree()
+			let _img = this.randomTree()		
 			databus.pushTree(new Tree(ctx,_img.img,_img.p))		
 		}
 		this.touch()
@@ -41,7 +49,9 @@ export default class main{
 	run(){			
 		/*计算当前点击位置*/
 		this.collisionDetection()
-
+		if(databus.gameOver){
+			return
+		}
 		let tap = this.touchX>=screenWidth/2
 		if (!(this.npc.posi == tap)) {
 			this.npc.posi = !this.npc.posi
@@ -49,9 +59,9 @@ export default class main{
 		}		
 
 		databus.score++
-
+		this.npc.blood = (this.npc.blood + 160>=6000)?6000:this.npc.blood+160
 		/*木头池*/
-		databus.shiftTree() //弹出		
+		databus.shiftTree(this.npc.posi) //弹出		
 		let _img = this.randomTree()
 		databus.pushTree(new Tree(ctx,_img.img,_img.p))
 	}
@@ -61,11 +71,10 @@ export default class main{
 		/*判断上一个木头*/
 		let _a,_b,_random=true;
 		let random = Math.random()
-		let last = "center"
+		let last = true
 		if (databus.trees.length>0) {
 			last = databus.trees[databus.trees.length-1].posiDr
 		}
-		 
 		if (last == "center") {
 			if (random<=0.3334) {
 				_a = treeRight
@@ -82,7 +91,6 @@ export default class main{
 			_a = treeCen
 			_b = "center"
 		}
-		
 		return {
 			img:_a,
 			p:_b
@@ -92,32 +100,61 @@ export default class main{
 	/*碰撞检测*/
 	collisionDetection(){
 		let isCollision = (this.npc.posi==databus.trees[0].posiDr)
-		isCollision&&(databus.gameOver = true)
+		isCollision&&(databus.gameOver = true)&&(this.npc.update(npcDie))
+	}
+  	//游戏结束后的触摸事件处理逻辑
+	touchEventHandler(e) {
+	     e.preventDefault()
 
+	    let x = e.touches[0].clientX
+	    let y = e.touches[0].clientY
+
+	    let area = this.gameinfo.btnArea
+	    if (x >= area.startX
+        && x <= area.endX
+        && y >= area.startY
+        && y <= area.endY ){
+		   	ctx.clearRect(0, 0, canvas.width, canvas.height)
+		   	this.restart = true
+		    this.init()
+		}
 	}
 
 	touch(){
 		let that = this;
-		wx.onTouchStart((touches)=>{			
+		if (this.restart) {return} // 保证touch事件永远只注册一次
+		wx.onTouchStart((touches)=>{	
+			if (databus.gameOver) {
+				return
+			}
+			that.npc.update(npcMove)
+			setTimeout(()=>{
+				that.npc.update(npcImg)
+			},100)
 			that.touchX = touches.changedTouches[0].clientX;
 			that.run()			
-		})	
+		})		
 	}
 	loop() { 
-		/*检测结束*/
-
-		if (databus.gameOver) {
-		  this.gameinfo.gameOver(databus.score)
-	      return;
-	    }
-		ctx.clearRect(0, 0, canvas.width, canvas.height)	
+		let that = this
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
 		this.back.render()
-		for(var k in databus.trees){
-			 databus.trees[k].renderTree(k)
-		}
 		this.npc.render()
 
-		this.gameinfo.render(databus.score)
+		for(var k in databus.trees){
+			databus.trees[k].renderTree(k)
+		}
+		this.npc.renderLifebar()
+		/*检测结束*/
+		if (databus.gameOver||this.npc.blood<0.017) {	
+		  databus.gameOver = true
+		  this.gameinfo.gameOver(databus.score)	
+		  this.touchHandler = that.touchEventHandler.bind(this)
+      	  canvas.addEventListener('touchstart', this.touchHandler)		 	  
+	      return
+	    }else{				  
+		  this.gameinfo.render(databus.score)
+		}			
 
 	 	window.requestAnimationFrame(
 	      this.loop.bind(this),

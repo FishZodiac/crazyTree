@@ -9,7 +9,6 @@ export default class tree{
 		this.posiDr = l  // 1代表左边，0代表右边
 	}
 
-
 	renderTree(i){
 		let that = this
 		that.treePosition(i)
@@ -21,11 +20,22 @@ export default class tree{
 	treePosition(i){
 		i++
 		if (this.posiDr && this.posiDr != "center") {
-			this.x = screenWidth/2-56
+			this.x = screenWidth/2-55
 		}else{
 			this.x = screenWidth/2-159
 			
 		}
 		this.y = screenHeight-60-i*60		
+	}
+
+	renderMove(pos){
+		let that = this
+		that.treePosition(0)
+		if (pos) {
+			that.x=100
+		}else{
+			that.x=that.x+100
+		}
+		that.ctx.drawImage(that.img,that.x,that.y,210,60)
 	}
 }
