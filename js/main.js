@@ -35,7 +35,8 @@ export default class main{
 					
 		for (var i = 1; i < 12; i++) {
 			let _img = this.randomTree()		
-			databus.pushTree(new Tree(ctx,_img.img,_img.p))		
+			let _tree =  databus.pool.getItemByClass('tree',Tree,ctx,_img.img,_img.p)	
+			databus.pushTree(_tree)
 		}
 		this.touch()
 		window.requestAnimationFrame(
@@ -61,9 +62,10 @@ export default class main{
 		databus.score++
 		this.npc.blood = (this.npc.blood + 160>=6000)?6000:this.npc.blood+160
 		/*木头池*/
-		databus.shiftTree(this.npc.posi) //弹出		
+		databus.shiftTree() //弹出		
 		let _img = this.randomTree()
-		databus.pushTree(new Tree(ctx,_img.img,_img.p))
+		let _tree =  databus.pool.getItemByClass('tree',Tree,ctx,_img.img,_img.p)	
+		databus.pushTree(_tree)
 	}
 
 	/*随机产生木头*/

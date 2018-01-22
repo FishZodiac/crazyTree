@@ -9,6 +9,11 @@ export default class tree{
 		this.posiDr = l  // 1代表左边，0代表右边
 	}
 
+	update(src,posiDr){
+		this.img.src = src
+		this.posiDr =posiDr
+	}
+
 	renderTree(i){
 		let that = this
 		that.treePosition(i)
