@@ -28,7 +28,8 @@ export default class main{
 		databus.reset()
 		canvas.removeEventListener('touchstart',this.touchHandler)
 		wx.triggerGC()
-
+		/*降低帧率*/
+		//wx.setPreferredFramesPerSecond(20)
 		this.back = new Back(ctx)	
 		this.npc = new Npc(ctx)		
 		this.gameinfo = new Gameinfo(ctx)
@@ -117,25 +118,28 @@ export default class main{
         && y >= area.startY
         && y <= area.endY ){
 		   	ctx.clearRect(0, 0, canvas.width, canvas.height)
-		   	this.restart = true
 		    this.init()
 		}
 	}
 
+	touchCuttree(e){
+		e.preventDefault()
+		let that = this;
+		if (databus.gameOver) {
+			return
+		}
+		that.npc.update(npcMove)
+		setTimeout(()=>{
+			that.npc.update(npcImg)
+		},100)
+		that.touchX = e.touches[0].clientX;
+		that.run()	
+	}
+
 	touch(){
 		let that = this;
-		if (this.restart) {return} // 保证touch事件永远只注册一次
-		wx.onTouchStart((touches)=>{	
-			if (databus.gameOver) {
-				return
-			}
-			that.npc.update(npcMove)
-			setTimeout(()=>{
-				that.npc.update(npcImg)
-			},100)
-			that.touchX = touches.changedTouches[0].clientX;
-			that.run()			
-		})		
+		this.touchCuttrees = that.touchCuttree.bind(this)
+		canvas.addEventListener('touchstart', this.touchCuttrees)
 	}
 	loop() { 
 		let that = this
@@ -150,7 +154,8 @@ export default class main{
 		/*检测结束*/
 		if (databus.gameOver||this.npc.blood<0.017) {	
 		  databus.gameOver = true
-		  this.gameinfo.gameOver(databus.score)	
+		  this.gameinfo.gameOver(databus.score)
+		  canvas.removeEventListener('touchstart',this.touchCuttrees)			 
 		  this.touchHandler = that.touchEventHandler.bind(this)
       	  canvas.addEventListener('touchstart', this.touchHandler)		 	  
 	      return

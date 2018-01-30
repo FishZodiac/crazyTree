@@ -16,7 +16,7 @@ export default class gameinfo{
 		this.ctx.fillStyle = "#883a3a"
 		this.ctx.fillRect(screenWidth / 2 - 150,screenHeight / 2 - 100,300,160)
 		this.ctx.font = "24px Microsoft YaHei"
-		this.ctx.fillStyle = "#ffffff"	
+		this.ctx.fillStyle = "#fefefe"	
 		   this.ctx.fillText(
 		      '游戏结束',
 		      screenWidth / 2 - 50,
@@ -28,6 +28,10 @@ export default class gameinfo{
 		      screenWidth / 2 - 50,
 		      screenHeight / 2 - 100 + 80
 		    )
+
+		    this.ctx.fillRect(screenWidth / 2 - 100,screenHeight / 2,200,50)
+
+		    this.ctx.fillStyle = "#883a3a"
 		    this.ctx.fillText(
 		      '重新开始',
 		      screenWidth / 2 - 50,
