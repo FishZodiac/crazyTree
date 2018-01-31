@@ -7,20 +7,21 @@ export default class databus{
 		this.gameOver = false
 		this.pool = new Pool()
 		this.trees = []
+		this.moveTree = []
 	}
 
 	reset(){
 		this.score = 0
 		this.gameOver = false
 		this.trees = []
+		this.moveTree = []
 	}	
 
 	pushTree(tree){		
 		this.trees.push(tree)
 	}
 
-	shiftTree(posi){
-		//this.trees[0].renderMove(posi)		
+	shiftTree(){
 		let temp = this.trees.shift()
 	    this.pool.recover('tree', temp)
 	}

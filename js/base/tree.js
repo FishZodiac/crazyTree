@@ -18,29 +18,27 @@ export default class tree{
 		let that = this
 		that.treePosition(i)
 		//that.img.onload = function(){	
-			that.ctx.drawImage(that.img,that.x,that.y,210,60)
+			that.ctx.drawImage(that.img,that.x,that.y,207,60)
 		//}
 	}
 
 	treePosition(i){
 		i++
 		if (this.posiDr && this.posiDr != "center") {
-			this.x = screenWidth/2-55
+			this.x = screenWidth/2-54
 		}else{
-			this.x = screenWidth/2-159
+			this.x = screenWidth/2-156
 			
 		}
 		this.y = screenHeight-60-i*60		
 	}
 
-	renderMove(pos){
-		let that = this
-		that.treePosition(0)
-		if (pos) {
-			that.x=100
+	renderMove(){
+		if (this.posiDr) {
+			this.x = this.x + 16
 		}else{
-			that.x=that.x+100
+			this.x = this.x - 16
 		}
-		that.ctx.drawImage(that.img,that.x,that.y,210,60)
+		this.ctx.drawImage(this.img,this.x,this.y,210,60)
 	}
 }
