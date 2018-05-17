@@ -138,7 +138,7 @@ export default class main{
 
 	touch(){
 		let that = this;
-		this.touchCuttrees = that.touchCuttree.bind(this)
+		this.touchCuttrees = that.touchCuttree.bind(this) // 更改this指向
 		canvas.addEventListener('touchstart', this.touchCuttrees)
 	}
 	loop() { 

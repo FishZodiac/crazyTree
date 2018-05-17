@@ -34,7 +34,7 @@ export default class tree{
 	}
 
 	renderMove(){
-		if (this.posiDr) {
+		if (!this.posiDr) {
 			this.x = this.x + 16
 		}else{
 			this.x = this.x - 16
